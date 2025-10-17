@@ -42,7 +42,7 @@ app.post("/wa-click", async (req, res) => {
     const response = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json", "X-Auth-Token": token },
-      body: JSON.stringify(req.body)
+      body: JSON.stringify(payload)
     });
 
     // Forward status back to client
