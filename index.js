@@ -26,5 +26,31 @@ app.post("/proxy", async (req, res) => {
   }
 });
 
+app.post("/wa-click", async (req, res) => {
+  try {
+    const endpoint = process.env.SHEET_ENDPOINT; 
+    const token = process.env.SHEET_TOKEN;       
+
+    if (!endpoint || !token) {
+      return res.status(500).send("Missing SHEET_ENDPOINT or SHEET_TOKEN env vars");
+    }
+
+    const url = endpoint + (endpoint.includes("?") ? "&" : "?") + "token=" + encodeURIComponent(token);
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Auth-Token": token },
+      body: JSON.stringify(req.body)
+    });
+
+    // Forward status back to client
+    const txt = await response.text();
+    res.status(response.status).send(txt);
+  } catch (err) {
+    res.status(500).send("Forward error: " + err.message);
+  }
+});
+
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Proxy running on port ${PORT}`));
