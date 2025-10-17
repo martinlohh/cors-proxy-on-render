@@ -5,6 +5,7 @@ const fetch = require("node-fetch");
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(express.text({ type: 'text/plain' }));
 
 app.post("/proxy", async (req, res) => {
   const targetUrl = req.query.url;
@@ -28,6 +29,7 @@ app.post("/proxy", async (req, res) => {
 
 app.post("/wa-click", async (req, res) => {
   try {
+    const payload = (typeof req.body === 'string') ? JSON.parse(req.body) : (req.body || {});
     const endpoint = process.env.SHEET_ENDPOINT; 
     const token = process.env.SHEET_TOKEN;       
 
